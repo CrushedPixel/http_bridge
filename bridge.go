@@ -55,7 +55,8 @@ func handle(f *ferry.Ferry, namespace string) http.HandlerFunc {
 	}
 }
 
-func writeResponse(rw http.ResponseWriter, res *ferry.Response) {
-	rw.WriteHeader(res.Status)
-	rw.Write([]byte(res.Payload))
+func writeResponse(rw http.ResponseWriter, res ferry.Response) {
+	status, payload := res.Response()
+	rw.WriteHeader(status)
+	rw.Write([]byte(payload))
 }
