@@ -5,21 +5,6 @@ import (
 	"net/http"
 )
 
-// NormalizeNamespace ensures that namespace starts with a slash
-// and does not end on a slash.
-func NormalizeNamespace(namespace string) string {
-	// prepend slash to namespace
-	if len(namespace) < 1 || namespace[0] != '/' {
-		namespace = "/" + namespace
-	}
-	// remove trailing slash from namespace
-	if len(namespace) > 1 && namespace[len(namespace)-1] == '/' {
-		namespace = namespace[:len(namespace)-1]
-	}
-
-	return namespace
-}
-
 func Bridge(f *ferry.Ferry, mux *http.ServeMux, namespace string) {
 	namespace = NormalizeNamespace(namespace)
 	// the mux pattern must end on a slash to
@@ -39,7 +24,7 @@ func HandleFunc(f *ferry.Ferry, namespace string) http.HandlerFunc {
 		conn, res := f.NewConnection(cr)
 		if res != nil {
 			// connection was denied
-			writeResponse(rw, res)
+			WriteResponse(rw, res)
 			return
 		}
 
@@ -53,12 +38,28 @@ func HandleFunc(f *ferry.Ferry, namespace string) http.HandlerFunc {
 			Payload:    req.Body,
 		}
 		// handle request and write response
-		writeResponse(rw, conn.Handle(r))
+		WriteResponse(rw, conn.Handle(r))
 	}
 }
 
-func writeResponse(rw http.ResponseWriter, res ferry.Response) {
+// WriteResponse writes a ferry.Response to the http.ResponseWriter.
+func WriteResponse(rw http.ResponseWriter, res ferry.Response) {
 	status, payload := res.Response()
 	rw.WriteHeader(status)
 	rw.Write([]byte(payload))
+}
+
+// NormalizeNamespace ensures that namespace starts with a slash
+// and does not end on a slash.
+func NormalizeNamespace(namespace string) string {
+	// prepend slash to namespace
+	if len(namespace) < 1 || namespace[0] != '/' {
+		namespace = "/" + namespace
+	}
+	// remove trailing slash from namespace
+	if len(namespace) > 1 && namespace[len(namespace)-1] == '/' {
+		namespace = namespace[:len(namespace)-1]
+	}
+
+	return namespace
 }
