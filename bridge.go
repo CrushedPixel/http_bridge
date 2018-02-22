@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+// NormalizeNamespace ensures that namespace starts with a slash
+// and does not end on a slash.
 func NormalizeNamespace(namespace string) string {
 	// prepend slash to namespace
 	if len(namespace) < 1 || namespace[0] != '/' {
@@ -24,10 +26,10 @@ func Bridge(f *ferry.Ferry, mux *http.ServeMux, namespace string) {
 	// match all subroutes
 	pattern := namespace + "/"
 
-	mux.HandleFunc(pattern, handle(f, namespace))
+	mux.HandleFunc(pattern, HandleFunc(f, namespace))
 }
 
-func handle(f *ferry.Ferry, namespace string) http.HandlerFunc {
+func HandleFunc(f *ferry.Ferry, namespace string) http.HandlerFunc {
 	return func(rw http.ResponseWriter, req *http.Request) {
 		// create new connection for request
 		cr := &ferry.ConnectionRequest{
