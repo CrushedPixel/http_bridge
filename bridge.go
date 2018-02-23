@@ -32,7 +32,7 @@ func HandleFunc(f *ferry.Ferry, namespace string) http.HandlerFunc {
 		// by removing namespace prefix
 		relativeURI := req.RequestURI[len(namespace):]
 
-		r := &ferry.Request{
+		r := &ferry.IncomingRequest{
 			Method:     req.Method,
 			RequestURI: relativeURI,
 			Payload:    req.Body,
