@@ -5,6 +5,10 @@ import (
 	"net/http"
 )
 
+func BridgeRoot(f *ferry.Ferry, mux *http.ServeMux) {
+	Bridge(f, mux, "")
+}
+
 func Bridge(f *ferry.Ferry, mux *http.ServeMux, namespace string) {
 	namespace = NormalizeNamespace(namespace)
 	// the mux pattern must end on a slash to
