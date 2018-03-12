@@ -20,6 +20,9 @@ func Bridge(f *ferry.Ferry, mux *http.ServeMux, namespace string) {
 
 func HandleFunc(f *ferry.Ferry, namespace string) http.HandlerFunc {
 	return func(rw http.ResponseWriter, req *http.Request) {
+		// normalize namespace
+		namespace = NormalizeNamespace(namespace)
+
 		// create new connection for request
 		cr := &ferry.ConnectionRequest{
 			RemoteAddr: req.RemoteAddr,
